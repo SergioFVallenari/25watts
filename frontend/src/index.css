@@ -1,0 +1,41 @@
+.background-red{
+    background-color: red !important;
+}
+.menuitem{
+    z-index: 9999 !important;
+}
+.layout-page{
+    background-color: #F8F7FB !important;
+}
+.ps-sidebar-container {
+    flex-direction: column-reverse;
+    height: 90vh;
+}
+.button-menu-mobile {
+  position: fixed;
+  top: 30px;
+  left: 25px;
+  z-index: 900;
+  display: block;
+}
+.z-menu{
+    z-index: 1040 !important;
+}
+
+/* Primary azul (ajusta al azul que usamos antes) */
+.btn-primary {
+  background-color: #0b5cff !important; /* azul vivo */
+  border-color: #0b5cff !important;
+}
+.btn-primary:hover {
+  background-color: #0038d1 !important;
+  border-color: #0038d1 !important;
+}
+
+/* Outline secondary: para botones claros */
+.btn-outline-secondary {
+  background-color: transparent;
+  border: 1px solid #e6e9ee;
+  color: #495057;
+}
+
