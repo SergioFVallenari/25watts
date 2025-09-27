@@ -17,15 +17,16 @@ interface Column {
 interface GridProps {
     columns?: any[];
     manejo_acciones?: Function;
+    reloadTrigger?: number;
 }
 
-const ResponsiveExample: React.FC<GridProps> = ({ columns = [], manejo_acciones }) => {
+const ResponsiveExample: React.FC<GridProps> = ({ columns = [], manejo_acciones, reloadTrigger }) => {
     const [rows, setRows] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage] = useState(10);
 
     const fetchGridData = async () => {
         if (!columns || columns.length === 0) return;
@@ -37,14 +38,14 @@ const ResponsiveExample: React.FC<GridProps> = ({ columns = [], manejo_acciones 
             setRows(content);
         } catch (err: any) {
             console.error(err);
-            setError(err?.message ?? 'Error fetching data');
+            setError(err?.response.data.msg ?? 'Error fetching data');
         } finally {
             setLoading(false);
         }
     };
     useEffect(() => {
         fetchGridData();
-    }, [setRows]);
+    }, [setRows, reloadTrigger]);
     const cols: Column[] = columns[2] ?? [];
     const renderCellByTipo = (tipoTabla: string, col: any, row: any) => {
         const value = col.data ? row[col.data] : undefined;
@@ -75,7 +76,7 @@ const ResponsiveExample: React.FC<GridProps> = ({ columns = [], manejo_acciones 
         }
     };
     if (loading) return <div>Cargando...</div>;
-    if (error) return <div className="text-danger">Error: {error}</div>;
+    if (error) return <div className="text-danger">{error}</div>;
 
     const filteredRows = rows.filter(row => {
         if (!searchTerm) return true;

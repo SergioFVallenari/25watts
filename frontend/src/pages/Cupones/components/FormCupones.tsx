@@ -10,33 +10,24 @@ import notifilix from "../../../app/services/notifilix";
 import api from "../../../app/services/api";
 import type { FormData, FormProps } from "./interfaces";
 import moment from "moment-timezone";
-const getSchema = (accion: string) =>
-    accion === 'a'
-        ? z
-            .object({
-                codigo: z.string().min(1, "Obligatorio"),
-                descripcion: z.string().min(1, "Obligatorio"),
-                valor: z.string().min(1, "Obligatorio"),
-                fecha_expiracion: z.string().min(1, "Obligatorio")
-                .refine((date)=>{
-                    if(date <= moment().format('YYYY-MM-DD')){
-                        return false
-                    }
-                    return true
-                },{message: "La fecha debe ser mayor a la actual"}),
-                estado: z.string().min(1, "Obligatorio"),
-            })
-        : z.object({
-            codigo: z.string().min(1, "Obligatorio"),
-            descripcion: z.string().min(1, "Obligatorio"),
-            valor: z.string().min(1, "Obligatorio"),
-            fecha_expiracion: z.string().min(1, "Obligatorio"),
-            estado: z.string().min(1, "Obligatorio"),
-        });
+const getSchema = z.object({
+    codigo: z.string().min(1, "Obligatorio"),
+    descripcion: z.string().min(1, "Obligatorio"),
+    valor: z.string().min(1, "Obligatorio")
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, { message: "Debe ser un número mayor a 0" }),
+    fecha_expiracion: z.string().min(1, "Obligatorio")
+        .refine((date) => {
+            if (date <= moment().format('YYYY-MM-DD')) {
+                return false
+            }
+            return true
+        }, { message: "La fecha debe ser mayor a la actual" }),
+    estado: z.string().min(1, "Obligatorio"),
+})
 
-const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, setRecargaGrid }) => {
-    const schema = getSchema(accion);
-    const { register, handleSubmit, formState: { errors },  reset } = useForm<FormData>({
+const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, setReloadGrid }) => {
+    const schema = getSchema
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
         defaultValues: {
             codigo: '',
             descripcion: '',
@@ -52,22 +43,22 @@ const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, s
                 case 'a': await altaRegistro(data); break;
                 case 'm': await updateRegistro(data); break;
                 case 'b':
-                    await api.delete(`/usuarios/${id}`);
-                    notifilix.EnviarMensaje('success', 'Registro eliminado exitosamente');
-                    setRecargaGrid(Date.now().toString());
+                    const response = await api.delete(`/api/cupones/${id}`);
+                    notifilix.EnviarMensaje('success', response.data.message);
+                    setReloadGrid && setReloadGrid((prev: any) => prev + 1);
                     onClose();
                     break;
                 default:
                     throw new Error('Acción no válida');
             }
-        } catch (error) {}
+        } catch (error) { }
     }
     const altaRegistro = async (data: any) => {
         try {
             const response = await api.post('/api/cupones', data);
             if (response.data.info) {
                 notifilix.EnviarMensaje('success', response.data.msg);
-                setRecargaGrid(Date.now().toString());
+                setReloadGrid && setReloadGrid((prev: any) => prev + 1);
                 onClose();
             } else {
                 notifilix.EnviarMensaje('danger', response.data.msg);
@@ -83,8 +74,8 @@ const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, s
             }
             const response = await api.put(`/api/cupones/${id}`, formatBody);
             if (response.data.info) {
-                notifilix.EnviarMensaje('success', response.data.msg);
-                setRecargaGrid(Date.now().toString());
+                notifilix.EnviarMensaje('success', response.data.message);
+                setReloadGrid && setReloadGrid((prev: any) => prev + 1);
                 onClose();
             } else {
                 notifilix.EnviarMensaje('danger', response.data.msg);
@@ -127,25 +118,25 @@ const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, s
                             <Form onSubmit={handleSubmit(onSubmit)} id="formUsuarios">
                                 <Form.Group className="mt-3">
                                     <FloatingLabel controlId="floatingSelect" label="Código" className="mb-3">
-                                        <Form.Control type="text" placeholder="" {...register("codigo")} isInvalid={!!errors.codigo}/>
+                                        <Form.Control type="text" placeholder="" {...register("codigo")} isInvalid={!!errors.codigo} />
                                         <Form.Control.Feedback type="invalid">{errors.codigo?.message}</Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
                                 <Form.Group className="mt-3">
                                     <FloatingLabel controlId="floatingValue" label="Descripción" className="mb-3">
-                                        <Form.Control type="text" placeholder="" {...register("descripcion")} isInvalid={!!errors.descripcion}/>
+                                        <Form.Control type="text" placeholder="" {...register("descripcion")} isInvalid={!!errors.descripcion} />
                                         <Form.Control.Feedback type="invalid">{errors.descripcion?.message}</Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
                                 <Form.Group className="mt-3">
                                     <FloatingLabel controlId="floatingIdValue" label="Valor" className="mb-3">
-                                        <Form.Control type="text" placeholder="" {...register("valor")} isInvalid={!!errors.valor}/>
+                                        <Form.Control type="text" placeholder="" {...register("valor")} isInvalid={!!errors.valor} />
                                         <Form.Control.Feedback type="invalid">{errors.valor?.message}</Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
                                 <Form.Group className="mt-3">
                                     <FloatingLabel controlId="floatingOrden" label="Fecha" className="mb-3">
-                                        <Form.Control type="date" placeholder="" {...register("fecha_expiracion")} isInvalid={!!errors.fecha_expiracion}/>
+                                        <Form.Control type="date" placeholder="" {...register("fecha_expiracion")} isInvalid={!!errors.fecha_expiracion} />
                                         <Form.Control.Feedback type="invalid">{errors.fecha_expiracion?.message}</Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
@@ -168,8 +159,8 @@ const FormCupones: React.FC<FormProps> = ({ accion, id, onClose, formDisabled, s
                             {accion === 'a' ? 'Agregar' : accion === 'm' ? 'Modificar' : 'Consultar'}
                         </Button>
                     </Row>
-                </Container> 
-                : 
+                </Container>
+                :
                 <Container>
                     <Row>
                         <Col xs={12} md={12} className="mx-auto text-center">

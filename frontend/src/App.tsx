@@ -1,14 +1,16 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login/Login'
-import Principal from './pages/Principal'
 import NotFound from './pages/notFound'
 import { useEffect } from 'react'
 import config from './app/services/config'
 import ProtectedRoute from './app/components/ProtectedRoute'
 import Cupones from './pages/Cupones/Cupones'
+import CuponesUser from './pages/CuponesUser/CuponesUser'
+import { useAppSelector } from './app/redux/hooks'
 
 function App() {
+  const datosUsuario:any = useAppSelector((state) => state.usuario.user);
   useEffect(() => {
     document.title = config.nombrePlataforma;
   }, []);
@@ -18,8 +20,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="*" element={<NotFound />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/inicio" element={<Principal />} />
           <Route path="/cupones" element={<Cupones />} />
+          <Route path="/cuponesUser" element={datosUsuario?.tipo==1 ? <CuponesUser /> : <NotFound />} />
         </Route>
       </Routes>
     </Router>

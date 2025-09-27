@@ -20,7 +20,7 @@ export const verifyToken = (req: CustomRequest, res: Response, next: NextFunctio
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(403).json({
+    return res.status(401).json({
       info: false,
       msg: 'Token inválido o expirado',
       content: [],

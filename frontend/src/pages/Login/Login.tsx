@@ -7,10 +7,9 @@ import {
   Form,
   Button,
   InputGroup,
-  Navbar,
   Offcanvas,
 } from "react-bootstrap";
-import { BellRinging, Eye, EyeOff, Moon } from "tabler-icons-react";
+import {  Eye, EyeOff } from "tabler-icons-react";
 import NavBar from "../../app/components/NavBar";
 import RegistroUsuario from "./RegistroUsuario";
 import api from "../../app/services/api";
@@ -34,10 +33,15 @@ const LoginPage: React.FC = () => {
       const response = await api.post('/api/login', { email, password });
       if (response.data.info) {
         dispatch(setUsuario({
-          token: response.data.data.token,
+          token: response.data?.data?.token,
+          user: response.data?.data?.user
         }))
         Notify.success(response.data.msg);
-        navigate('/inicio');
+        if(response.data?.data?.user?.tipo == '0'){
+          navigate('/cupones');
+        } else {
+          navigate('/cuponesUser');
+        }
       } else {
         notifilix.EnviarMensaje('danger', response.data.message);
       }

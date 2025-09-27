@@ -20,6 +20,10 @@ export const swaggerOptions: Options = {
         url: `http://localhost:${config.PORT}`,
         description: 'Servidor local',
       },
+      {
+        url: 'https://watts-724067888579.southamerica-west1.run.app',
+        description: 'Servidor de test',
+      }
     ],
     components: {
       securitySchemes: {

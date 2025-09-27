@@ -3,7 +3,7 @@ export interface FormProps {
     id?: number; // ID del registro a modificar o consultar
     onClose: () => void; // Callback para manejar éxito después de la operación
     formDisabled?: boolean; // Deshabilitar formulario
-    setRecargaGrid: (descripcion: string) => void; // Callback para recargar el grid
+    setReloadGrid?: (value: any) => void;
 }
 export interface FormData {
     id?: number;

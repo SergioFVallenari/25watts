@@ -1,19 +1,24 @@
 import React from 'react';
-import {  Home, Logout, Menu2, Tag } from 'tabler-icons-react';
+import { Logout, Menu2 } from 'tabler-icons-react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import config from '../services/config';
 import { useDispatch } from 'react-redux';
-import { clearUsuario} from '../redux/slice/usuarioSlice';
+import { clearUsuario } from '../redux/slice/usuarioSlice';
 import { ConfirmModal } from '../services/notifilix';
+import { useAppSelector } from '../redux/hooks';
+import AdminPanel from './AdminPanel';
+import UserPanel from './UserPanel';
+
 const MenuLateral: React.FC = () => {
   const [collapsed, setCollapsed] = React.useState(false);
   const [toggled, setToggled] = React.useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const datosUsuario: any = useAppSelector((state) => state.usuario.user);
   const logout = () => {
     ConfirmModal('Cerrar Sesión', '¿Estas seguro que deseas cerrar la sesión?', async () => {
       dispatch(clearUsuario());
@@ -34,11 +39,11 @@ const MenuLateral: React.FC = () => {
           onBackdropClick={() => setToggled(false)}
           breakPoint="md"
           transitionDuration={500}
-          backgroundColor="#0038D1" 
+          backgroundColor="#0038D1"
           rootStyles={{
             color: 'white',
           }}
-          >
+        >
           <Navbar className="mb-3">
             <Container>
               <Navbar.Brand className="w-100">
@@ -55,13 +60,12 @@ const MenuLateral: React.FC = () => {
             </Container>
           </Navbar>
           <Menu className='ps-sidebar-container'>
-            <MenuItem component={<Link to="/inicio" />}>
-              <Home /> {!collapsed && <span>Inicio</span>}
-            </MenuItem>
-            <MenuItem component={<Link to="/cupones" />}>
-              <Tag /> {!collapsed && <span>Cupones</span>}
-            </MenuItem>
-
+            {
+              datosUsuario.tipo == '0' ?
+                <AdminPanel collapsed={collapsed} />
+                :
+                <UserPanel collapsed={collapsed} />
+            }
             <MenuItem onClick={logout}>
               <Logout /> {!collapsed && <span>Cerrar Sesión</span>}
             </MenuItem>
