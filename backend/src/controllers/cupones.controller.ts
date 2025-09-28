@@ -83,10 +83,10 @@ export const canjearCupon = async (req: CustomRequest, res: Response) => {
             return res.status(400).json({ info: false, message: "Datos inválidos", error: canjeValidation.error.flatten().fieldErrors });
         }
         await exec_sp_to_json(`${config.SP_PREFIJO}_canjear_cupon`, { ...canjeValidation.data });
-        res.status(200).json({ info: true, message: "Cupón canjeado" });
+        res.status(200).json({ info: true, message: "Cupón canjeado"});
 
-
-    } catch (error) {
-        res.status(400).json({ info: false, message: "Error al canjear el cupón" });
+    } catch (error:any) {
+        console.log(error.response);
+        res.status(400).json({ info: false, message: error.message||"Error al canjear el cupón",  });
     }
 }

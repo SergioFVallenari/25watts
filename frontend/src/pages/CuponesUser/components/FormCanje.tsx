@@ -3,6 +3,7 @@ import { Button, Col, Container, FloatingLabel, Form, Row } from "react-bootstra
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import api from "../../../app/services/api";
+import notifilix from "../../../app/services/notifilix";
 
 interface FormCanjeProps {
     accion: string; // 'a' para alta, 'm' para modificar, 'c' para visualizar (consulta)
@@ -27,10 +28,12 @@ const FormCanje: React.FC<FormCanjeProps> = ({ onClose, setReload }) => {
         try {
             const response = await api.post('/api/canjear-cupon', data);
             if (response.data.info) {
+                notifilix.EnviarMensaje('success', response.data.message);
                 onClose();
             }
-        } catch (error) {
-
+        } catch (error:any) {
+            console.error(error);
+            notifilix.EnviarMensaje('danger', error?.response.data.message || 'Error al canjear el cupón');
         }
     }
     return (

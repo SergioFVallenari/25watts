@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="*" element={<NotFound />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/cupones" element={<Cupones />} />
+          <Route path="/cupones" element={ datosUsuario?.tipo==0 ? <Cupones /> : <NotFound />} />
           <Route path="/cuponesUser" element={datosUsuario?.tipo==1 ? <CuponesUser /> : <NotFound />} />
         </Route>
       </Routes>

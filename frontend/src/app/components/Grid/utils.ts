@@ -9,7 +9,7 @@ export const resuelve_tabla_by_tipo = (tipo: any) => {
         { data: 'idcupones', title: 'Acciones', searchable: false },
     ]
     switch (tipo) {
-        case 'cupones': array_tipo.push('/api/cupones', 'Cupones', columns_cupones, 10, 'abm_cupones', 'abmc', [1, 2, 3, 4, 5], 'landscape', [[0, 'desc']]); break;
+        case 'cupones': array_tipo.push('/api/cupones', 'Cupones', columns_cupones, 10, 'abm_cupones'); break;
     }
     return array_tipo
 }
