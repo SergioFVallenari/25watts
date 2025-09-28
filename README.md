@@ -10,4 +10,5 @@ Con el usuario normal podes ver los cupones creados pero en forma de cards y can
 --email: user@gmail.com
 --password: passpass
 
+-El formulario de registro está funcionando pero unicamente con registro del tipo usuario normal
 -Pedir enviroments
